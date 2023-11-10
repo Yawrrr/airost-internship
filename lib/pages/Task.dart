@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:helep_v1/models/services_model.dart';
 
@@ -19,7 +19,7 @@ class _TaskState extends State<Task> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/createTask');
+          Navigator.popAndPushNamed(context, '/createTask');
         },
         child: Icon(Icons.add),
       ),

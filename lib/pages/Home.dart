@@ -7,6 +7,8 @@ import 'package:helep_v1/pages/Helepers.dart';
 import 'package:helep_v1/pages/Messages.dart';
 import 'package:helep_v1/pages/Task.dart';
 import 'package:helep_v1/pages/profile.dart';
+import 'package:helep_v1/services/auth/auth_services.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,6 +16,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  //user sign out
+  void signOut() {
+    //get auth service
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    authService.signOut();
+  }
+
   int _selectedIndex = 0;
 
   List<ServiceModel> services = [];
@@ -30,6 +40,11 @@ class _HomeState extends State<Home> {
         title: Text(
           'Home Page',
         ),
+        actions: [
+          //sign out button
+
+          IconButton(onPressed: signOut, icon: Icon(Icons.logout))
+        ],
       ),
       bottomNavigationBar: bottomNavigator(context),
       body: Padding(

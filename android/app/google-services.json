@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "389058299944",
+    "project_id": "helep2",
+    "storage_bucket": "helep2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389058299944:android:8c49fc875dbcecefbdcd1d",
+        "android_client_info": {
+          "package_name": "com.yawrrrk.helep_v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGNfE7fo-HOi03oEd_AdcGjmJDX7Y3GbY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
