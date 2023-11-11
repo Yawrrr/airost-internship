@@ -19,7 +19,7 @@ class _TaskState extends State<Task> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.popAndPushNamed(context, '/createTask');
+          Navigator.pushNamed(context, '/createTask');
         },
         child: Icon(Icons.add),
       ),
