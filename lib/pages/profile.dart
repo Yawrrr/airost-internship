@@ -14,9 +14,40 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-      ),
+       body : Stack(
+        children: <Widget>[
+          CustomScrollView(
+            slivers: <Widget> [
+              SliverAppBar(
+                expandedHeight: 450,
+                backgroundColor:Colors.black,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/jay.jpg'),
+                        fit: BoxFit.cover
+                      )
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomRight,
+                          colors: [
+                            Colors.black,
+                            Colors.black.withOpacity(.3)
+                          ]
+                        )
+                      ),
+                      
+                    ),
+                  ),
+                ),
+              )
+            ],
+          )
+        ],),   
+    
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,
