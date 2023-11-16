@@ -14,6 +14,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
        body : Stack(
         children: <Widget>[
           CustomScrollView(
@@ -22,6 +23,7 @@ class _ProfileState extends State<Profile> {
                 expandedHeight: 450,
                 backgroundColor:Colors.black,
                 flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
                   background: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -39,11 +41,61 @@ class _ProfileState extends State<Profile> {
                           ]
                         )
                       ),
-                      
+                      child: Padding(
+                        padding:EdgeInsets.all(20),
+                        child: Center(
+                          child: Column(                         
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[      
+                                                
+                                Text("Jay Chou",style: 
+                                TextStyle(
+                                  color: Colors.white , fontWeight: FontWeight.bold , fontSize: 40)
+                                  
+                                ,),
+                                SizedBox(height: 20,),
+                                Row(
+                                  children: <Widget>[],
+                                )
+                            ],
+                          ),
+                        ), 
+                        ),
                     ),
                   ),
                 ),
-              )
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    children : <Widget>[
+                      Text("+ 60 12345678",style:TextStyle(color: Colors.white ,fontSize: 18 , fontWeight:FontWeight.bold , fontFamily: 'OpenSans')),
+                      SizedBox(height:10,),
+                      Text("Tap to change phone number",style:TextStyle(color: Colors.grey)),
+                      SizedBox(height:20,),
+                      Text("@abcdef",style:TextStyle(color: Colors.white ,fontSize: 18 , fontWeight:FontWeight.bold ,fontFamily: 'OpenSans')),
+                      SizedBox(height:10,),
+                      Text("Username",style:TextStyle(color: Colors.grey)),
+                      SizedBox(height:20,),
+                      Text("Bio",style:TextStyle(color: Colors.white ,fontSize: 18 , fontWeight:FontWeight.bold ,fontFamily: 'OpenSans')),
+                      SizedBox(height:10,),
+                      Text("Add a few words about yourself",style:TextStyle(color: Colors.grey)),
+                      SizedBox(height:20,),
+                      Container(
+                        height: 200,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      ),
+                      SizedBox(height:120,),
+                      
+                    ]
+                  )
+          )])),
             ],
           )
         ],),   
