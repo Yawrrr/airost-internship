@@ -1,16 +1,18 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:helep_v1/Components/caht_bubble.dart';
+import 'package:helep_v1/Components/chat_bubble.dart';
 import 'package:helep_v1/Components/my_text_field.dart';
 import 'package:helep_v1/services/chat/chat_service.dart';
 
 class ChatPage extends StatefulWidget {
-  final String receiverUserEmail;
+  final String receiverUsername;
   final String receiverUserID;
   const ChatPage(
       {super.key,
-      required this.receiverUserEmail,
+      required this.receiverUsername,
       required this.receiverUserID});
 
   @override
@@ -35,7 +37,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverUserEmail),
+        title: Text(widget.receiverUsername),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -76,6 +78,8 @@ class _ChatPageState extends State<ChatPage> {
   //build message item
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+    print(document);
+    print(document.data());
 
     //align the message to the right if the sender is the current user, otherwise to the left
     var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid)
@@ -92,7 +96,7 @@ class _ChatPageState extends State<ChatPage> {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
           children: [
-            Text(data['senderEmail']),
+            Text(data['senderUsername']),
             SizedBox(
               height: 8,
             ),

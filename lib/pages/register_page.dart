@@ -13,6 +13,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
+  final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -26,7 +27,7 @@ class RegisterPageState extends State<RegisterPage> {
 
     final authService = Provider.of<AuthService>(context, listen: false);
     try {
-      await authService.signUpWithEmailandPassword(
+      await authService.signUpWithEmailandPassword(usernameController.text,
           emailController.text, passwordController.text);
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -66,6 +67,16 @@ class RegisterPageState extends State<RegisterPage> {
                   fontSize: 16,
                 ),
               ),
+
+              SizedBox(
+                height: 15,
+              ),
+
+              //username textfield
+              MyTextField(
+                  controller: usernameController,
+                  hintText: 'Username',
+                  obsecureText: false),
 
               SizedBox(
                 height: 15,
