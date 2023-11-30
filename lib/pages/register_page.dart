@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:helep_v1/Components/my_button.dart';
 import 'package:helep_v1/Components/my_text_field.dart';

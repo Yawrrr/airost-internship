@@ -46,7 +46,6 @@ class _HomeState extends State<Home> {
           IconButton(onPressed: signOut, icon: Icon(Icons.logout))
         ],
       ),
-      bottomNavigationBar: bottomNavigator(context),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(12.0, 16, 8, 0),
         child: Column(

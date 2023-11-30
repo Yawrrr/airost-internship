@@ -12,11 +12,11 @@ class Chatservice extends ChangeNotifier {
   Future<void> sendMessage(String receiverId, String message) async {
     //get current user info
     final String currentUserId = _firebaseAuth.currentUser!.uid;
-    final DocumentSnapshot senderDoc = await FirebaseFirestore.instance
+    final DocumentSnapshot document = await FirebaseFirestore.instance
         .collection('user')
         .doc(currentUserId)
         .get();
-    final String currentUsername = senderDoc.get('username');
+    final String currentUsername = document.get('username');
     final Timestamp timestamp = Timestamp.now();
 
     //create a new message

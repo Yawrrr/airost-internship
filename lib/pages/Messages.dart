@@ -14,7 +14,6 @@ class Messages extends StatefulWidget {
 
 class _MessagesState extends State<Messages> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  int _selectedIndex = 2;
   @override
   Widget build(BuildContext context) {
     return Padding(

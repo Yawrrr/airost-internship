@@ -19,7 +19,14 @@ class _main_pageState extends State<MainPage> {
     return Scaffold(
       bottomNavigationBar: BottonNavigationBar(context),
       body: <Widget>[
-        HomePage(),
+        HomePage(
+          onHelepersTap: () {
+            // Set the state to switch to the "Helepers" page
+            setState(() {
+              _selectedIndex = 3;
+            });
+          },
+        ),
         Task(),
         Messages(),
         Helepers(),

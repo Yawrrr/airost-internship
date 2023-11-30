@@ -1,6 +1,9 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers, file_names
+
 import 'package:flutter/material.dart';
 import 'package:helep_v1/Components/my_button.dart';
 import 'package:helep_v1/models/services_model.dart';
+import 'package:helep_v1/services/task/task_service.dart';
 
 class CreateTask extends StatefulWidget {
   const CreateTask({super.key});
@@ -10,18 +13,37 @@ class CreateTask extends StatefulWidget {
 }
 
 class CreateTaskState extends State<CreateTask> {
-  int _currentStep = 0;
-  String _ServiceDropDown = 'Select an service';
-  String _AreaDropDown = 'Select Area';
   List<ServiceModel> instance = ServiceModel.getService();
-  TextEditingController textcontroller = TextEditingController();
+  TextEditingController datecontroller = TextEditingController();
   TextEditingController timecontroller = TextEditingController();
+  TextEditingController fromcontroller = TextEditingController();
+  TextEditingController tocontroller = TextEditingController();
+  TextEditingController paxcontroller = TextEditingController();
+  TextEditingController remarkcontroller = TextEditingController();
+  final TaskService _taskService = TaskService();
+
+  void createTask() async {
+    //send only if all textfield is not empty except for remarks
+    if (fromcontroller.text.isNotEmpty &&
+        tocontroller.text.isNotEmpty &&
+        datecontroller.text.isNotEmpty &&
+        timecontroller.text.isNotEmpty &&
+        paxcontroller.text.isNotEmpty) {
+      await _taskService.createTask(
+          fromcontroller.text,
+          tocontroller.text,
+          datecontroller.text,
+          timecontroller.text,
+          paxcontroller.text,
+          remarkcontroller.text);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create task'),
+        title: const Text('Create task'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
@@ -29,14 +51,14 @@ class CreateTaskState extends State<CreateTask> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Task Details',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 24,
               ),
               Row(
@@ -44,6 +66,7 @@ class CreateTaskState extends State<CreateTask> {
                   Flexible(
                       flex: 5,
                       child: TextField(
+                        controller: fromcontroller,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.grey[200],
@@ -54,7 +77,7 @@ class CreateTaskState extends State<CreateTask> {
                           ),
                         ),
                       )),
-                  Container(
+                  const SizedBox(
                     width: 50,
                     height: 50,
                     child: Icon(Icons.arrow_forward),
@@ -62,6 +85,7 @@ class CreateTaskState extends State<CreateTask> {
                   Flexible(
                       flex: 6,
                       child: TextField(
+                        controller: tocontroller,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.grey[200],
@@ -73,38 +97,38 @@ class CreateTaskState extends State<CreateTask> {
                       ))
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Row(
                 children: [
-                  Container(width: 60, child: Text('Date:')),
+                  const SizedBox(width: 60, child: Text('Date:')),
                   Flexible(
                       child: TextField(
-                    controller: textcontroller,
+                    controller: datecontroller,
                     onTap: () {
                       _selectDate();
                     },
                     decoration: InputDecoration(
                         filled: true,
                         labelText: 'dd/mm/yy',
-                        prefixIcon: Icon(Icons.calendar_today),
+                        prefixIcon: const Icon(Icons.calendar_today),
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(40)),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: const BorderSide(color: Colors.blue),
                             borderRadius: BorderRadius.circular(40))),
                     readOnly: true,
                   ))
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Row(
                 children: [
-                  Container(width: 60, child: Text('Time:')),
+                  const SizedBox(width: 60, child: Text('Time:')),
                   Flexible(
                       child: TextField(
                     controller: timecontroller,
@@ -122,14 +146,15 @@ class CreateTaskState extends State<CreateTask> {
                   ))
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Row(
                 children: [
-                  Container(width: 60, child: Text('Pax:')),
+                  const SizedBox(width: 60, child: Text('Pax:')),
                   Flexible(
                       child: TextField(
+                    controller: paxcontroller,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.grey[200],
@@ -137,19 +162,20 @@ class CreateTaskState extends State<CreateTask> {
                           borderSide: BorderSide.none,
                           borderRadius: BorderRadius.circular(30)),
                       labelText: 'No of Passengers',
-                      labelStyle: TextStyle(),
+                      labelStyle: const TextStyle(),
                     ),
                   ))
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Row(
                 children: [
-                  Container(width: 60, child: Text('Remarks:')),
+                  const SizedBox(width: 60, child: Text('Remarks:')),
                   Flexible(
                       child: TextField(
+                    controller: remarkcontroller,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.grey[200],
@@ -161,11 +187,12 @@ class CreateTaskState extends State<CreateTask> {
                   ))
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 12,
               ),
               Mybutton(
                   onTap: () {
+                    createTask();
                     Navigator.pop(context);
                   },
                   text: 'Submit'),
@@ -185,7 +212,7 @@ class CreateTaskState extends State<CreateTask> {
 
     if (_picked != null) {
       setState(() {
-        textcontroller.text = _picked.toString().split(" ")[0];
+        datecontroller.text = _picked.toString().split(" ")[0];
       });
     }
   }
