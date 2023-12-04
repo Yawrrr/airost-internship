@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:helep_v1/Components/drawer.dart';
 import 'package:helep_v1/models/services_model.dart';
 import 'package:helep_v1/pages/Helepers.dart';
 import 'package:helep_v1/pages/Messages.dart';
@@ -16,6 +18,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  //user 
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+
   //user sign out
   void signOut() {
     //get auth service
@@ -32,8 +39,24 @@ class _HomeState extends State<Home> {
     services = ServiceModel.getService();
   }
 
+  // navigate to profile  用這個example弄其他的
+  void goToProfilePage(){
+    //pop menu
+    Navigator.pop(context);
+
+    //go profile
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:(context) => Profile(),
+      ),
+
+  );
+  }
+
   @override
   Widget build(BuildContext context) {
+    
     getInitialInfo();
     return Scaffold(
       appBar: AppBar(
@@ -46,6 +69,12 @@ class _HomeState extends State<Home> {
           IconButton(onPressed: signOut, icon: Icon(Icons.logout))
         ],
       ),
+
+     drawer: MyDrawer(
+      OnProfileTap: goToProfilePage,
+      OnSignOut: signOut,
+     ),
+
       bottomNavigationBar: bottomNavigator(context),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(12.0, 16, 8, 0),
