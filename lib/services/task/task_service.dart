@@ -56,5 +56,8 @@ class TaskService extends ChangeNotifier {
         .orderBy('createTime', descending: false)
         .snapshots();
   }
-}
 
+  Stream<QuerySnapshot> getHeleper(String uid) {
+    return _firestore.collection('user').snapshots();
+  }
+}

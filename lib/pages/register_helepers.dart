@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class registerHeleper extends StatefulWidget {
   const registerHeleper({super.key});
@@ -17,22 +18,35 @@ class _registerHeleperState extends State<registerHeleper> {
     User? user = FirebaseAuth.instance.currentUser;
     String uid = user!.uid;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+      ),
       body: Center(
-        child: IconButton(
-            onPressed: () async {
-              try {
-                await FirebaseFirestore.instance
-                    .collection('user')
-                    .doc(user.uid)
-                    .update({
-                  'heleper': true,
-                });
-              } catch (error) {
-                print('Error during registration: $error');
-              }
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.app_registration_rounded)),
+        child: Column(
+          children: [
+            Text('Register as a Heleper now!'),
+            IconButton(
+              onPressed: () async {
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('user')
+                      .doc(user.uid)
+                      .update({
+                    'heleper': true,
+                  });
+                } catch (error) {
+                  print('Error during registration: $error');
+                }
+                Navigator.pop(context);
+              },
+              icon: SvgPicture.asset('assets/icons/register.svg'),
+            )
+          ],
+        ),
       ),
     );
   }

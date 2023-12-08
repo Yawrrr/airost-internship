@@ -26,7 +26,6 @@ class _TaskState extends State<Task> {
   Future<void> _checkIsHeleper() async {
     // Retrieve the current user
     User? user = FirebaseAuth.instance.currentUser;
-
     if (user != null) {
       try {
         DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
@@ -35,7 +34,6 @@ class _TaskState extends State<Task> {
             .get();
 
         if (documentSnapshot.exists) {
-          // Assuming 'helper' is the field indicating whether the user is a service provider
           isHeleper = documentSnapshot['heleper'] ?? false;
         }
       } catch (error) {
