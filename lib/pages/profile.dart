@@ -46,10 +46,6 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-      ),
-
       body: ListView(
         children: [
           const SizedBox(height: 50,),

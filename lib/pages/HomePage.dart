@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+          Row(
               children: [
                 const Text(
                   'Home Page',
