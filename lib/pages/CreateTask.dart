@@ -48,8 +48,7 @@ class CreateTaskState extends State<CreateTask> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: [
               const Text(
                 'Task Details',

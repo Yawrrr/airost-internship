@@ -84,7 +84,7 @@ class _TaskState extends State<Task> {
         future: _checkIsHeleper(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loading');
+            return CircularProgressIndicator();
           }
 
           return StreamBuilder(
@@ -94,7 +94,7 @@ class _TaskState extends State<Task> {
                 return Text('Error${snapshot.error}');
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text('Loading');
+                return CircularProgressIndicator();
               }
 
               return ListView(
@@ -179,9 +179,7 @@ Widget getHeleperTask(DocumentSnapshot document, User? user) {
                 child: Center(
                   child: Text(
                     data['from'],
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -193,9 +191,8 @@ Widget getHeleperTask(DocumentSnapshot document, User? user) {
                   child: Center(
                     child: Text(
                       data['to'],
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -207,26 +204,59 @@ Widget getHeleperTask(DocumentSnapshot document, User? user) {
           ),
           Row(
             children: [
-              Text('Date: '),
-              Text(data['date']),
+              Text(
+                'Date:       ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['date'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
+          ),
+          SizedBox(
+            height: 2,
           ),
           Row(
             children: [
-              Text('Time: '),
-              Text(data['time']),
+              Text(
+                'Time:      ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['time'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
+          ),
+          SizedBox(
+            height: 2,
           ),
           Row(
             children: [
-              Text('Pax: '),
-              Text(data['pax']),
+              Text(
+                'Pax:        ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['pax'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
+          ),
+          SizedBox(
+            height: 2,
           ),
           Row(
             children: [
-              Text('Remark: '),
-              Text(data['remark']),
+              Text(
+                'Remark: ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['remark'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
           ),
           TextButton(
@@ -301,9 +331,7 @@ Widget getNonHeleperTask(DocumentSnapshot document) {
                 child: Center(
                   child: Text(
                     data['from'],
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -315,9 +343,8 @@ Widget getNonHeleperTask(DocumentSnapshot document) {
                   child: Center(
                     child: Text(
                       data['to'],
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -329,26 +356,59 @@ Widget getNonHeleperTask(DocumentSnapshot document) {
           ),
           Row(
             children: [
-              Text('Date: '),
-              Text(data['date']),
+              Text(
+                'Date:       ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['date'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
+          ),
+          SizedBox(
+            height: 2,
           ),
           Row(
             children: [
-              Text('Time: '),
-              Text(data['time']),
+              Text(
+                'Time:      ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['time'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
+          ),
+          SizedBox(
+            height: 2,
           ),
           Row(
             children: [
-              Text('Pax: '),
-              Text(data['pax']),
+              Text(
+                'Pax:        ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['pax'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
+          ),
+          SizedBox(
+            height: 2,
           ),
           Row(
             children: [
-              Text('Remark: '),
-              Text(data['remark']),
+              Text(
+                'Remark: ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+              ),
+              Text(
+                data['remark'],
+                style: TextStyle(fontSize: 16),
+              ),
             ],
           ),
         ],

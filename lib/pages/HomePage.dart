@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:helep_v1/models/services_model.dart';
 import 'package:helep_v1/services/auth/auth_services.dart';
 import 'package:provider/provider.dart';
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Row(
+            Row(
               children: [
                 const Text(
                   'Home Page',
@@ -127,7 +128,7 @@ class _HomePageState extends State<HomePage> {
               ),
             Expanded(
               child: Container(
-                height: 360.0,
+                child: Image.asset('assets/vectors/Split_testing.png'),
               ),
             ),
             Column(
