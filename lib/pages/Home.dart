@@ -69,16 +69,6 @@ class _HomeState extends State<Home> {
           IconButton(onPressed: signOut, icon: Icon(Icons.logout))
         ],
       ),
-<<<<<<< HEAD
-
-     drawer: MyDrawer(
-      OnProfileTap: goToProfilePage,
-      OnSignOut: signOut,
-     ),
-
-      bottomNavigationBar: bottomNavigator(context),
-=======
->>>>>>> 8b3f3ab0e76ceda66a5114a6ebd0e4bcabd48a84
       body: Padding(
         padding: const EdgeInsets.fromLTRB(12.0, 16, 8, 0),
         child: Column(
