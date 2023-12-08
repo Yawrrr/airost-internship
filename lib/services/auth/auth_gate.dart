@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:helep_v1/pages/Home.dart';
+import 'package:helep_v1/pages/main_page.dart';
 import 'package:helep_v1/services/auth/login_or_register.dart';
 
 class AuthGate extends StatelessWidget {
@@ -13,9 +13,9 @@ class AuthGate extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Home();
+              return const MainPage();
             } else {
-              return LoginOrRegister();
+              return const LoginOrRegister();
             }
           }),
     );

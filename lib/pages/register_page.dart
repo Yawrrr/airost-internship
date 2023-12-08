@@ -1,5 +1,10 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+=======
+// ignore_for_file: use_build_context_synchronously
+
+>>>>>>> 8b3f3ab0e76ceda66a5114a6ebd0e4bcabd48a84
 import 'package:flutter/material.dart';
 import 'package:helep_v1/Components/my_button.dart';
 import 'package:helep_v1/Components/my_text_field.dart';
@@ -15,6 +20,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
+  final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -28,7 +34,7 @@ class RegisterPageState extends State<RegisterPage> {
 
     final authService = Provider.of<AuthService>(context, listen: false);
     try {
-      await authService.signUpWithEmailandPassword(
+      await authService.signUpWithEmailandPassword(usernameController.text,
           emailController.text, passwordController.text);
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -68,6 +74,16 @@ class RegisterPageState extends State<RegisterPage> {
                   fontSize: 16,
                 ),
               ),
+
+              SizedBox(
+                height: 15,
+              ),
+
+              //username textfield
+              MyTextField(
+                  controller: usernameController,
+                  hintText: 'Username',
+                  obsecureText: false),
 
               SizedBox(
                 height: 15,

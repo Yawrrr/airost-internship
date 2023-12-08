@@ -1,9 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_final_fields, unused_field
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:helep_v1/models/services_model.dart';
+import 'package:helep_v1/services/task/task_service.dart';
 
 class Task extends StatefulWidget {
   const Task({super.key});
@@ -14,351 +14,377 @@ class Task extends StatefulWidget {
 
 class _TaskState extends State<Task> {
   int _selectedIndex = 1;
+  final TaskService _task = TaskService();
+  bool isHeleper = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIsHeleper;
+  }
+
+  Future<void> _checkIsHeleper() async {
+    // Retrieve the current user
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+            .collection('user')
+            .doc(user.uid)
+            .get();
+
+        if (documentSnapshot.exists) {
+          // Assuming 'helper' is the field indicating whether the user is a service provider
+          isHeleper = documentSnapshot['heleper'] ?? false;
+        }
+      } catch (error) {
+        print('Error fetching user data: $error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/createTask');
-        },
-        child: Icon(Icons.add),
-      ),
-      appBar: AppBar(
-        title: Text(
-          'Task',
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Tasks',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Expanded(child: _buildTaskList()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    elevation: 0,
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/createTask');
+                    },
+                    child: Icon(Icons.add),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-              switch (index) {
-                case 0:
-                  Navigator.pushReplacementNamed(context, '/');
-                  break;
-                case 1:
-                  Navigator.pushReplacementNamed(context, '/task');
-                  break;
-                case 2:
-                  Navigator.pushReplacementNamed(context, '/messages');
-                  break;
-                case 3:
-                  Navigator.pushReplacementNamed(context, '/heleper');
-                  break;
-                case 4:
-                  Navigator.pushReplacementNamed(context, '/profile');
-                  break;
+    );
+  }
+
+  Widget _buildTaskList() {
+    return FutureBuilder<void>(
+        future: _checkIsHeleper(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text('Loading');
+          }
+
+          return StreamBuilder(
+            stream: _task.getTask(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error${snapshot.error}');
               }
-            });
-          },
-          items: [
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Home.svg'),
-                label: 'Home'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(_selectedIndex == 1
-                    ? 'assets/vectors/Task_filled.svg'
-                    : 'assets/vectors/Task.svg'),
-                label: 'Tasks'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Messages.svg'),
-                label: 'Messages'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Helepers.svg'),
-                label: 'Helepers'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Profile.svg'),
-                label: 'Profile')
-          ]),
-    );
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Loading');
+              }
+
+              return ListView(
+                children: snapshot.data!.docs
+                    .map((document) => _buildTaskItem(document, isHeleper))
+                    .toList(),
+              );
+            },
+          );
+        });
+  }
+
+  //build task item
+  Widget _buildTaskItem(DocumentSnapshot document, bool isHeleper) {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (isHeleper) {
+      return getHeleperTask(document, user);
+    } else {
+      return getNonHeleperTask(document);
+    }
   }
 }
 
-class CreateTask extends StatefulWidget {
-  const CreateTask({super.key});
-
-  @override
-  State<CreateTask> createState() => CreateTaskState();
+Widget getHeleperTask(DocumentSnapshot document, User? user) {
+  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+  return Card(
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: Container(
+                  width: 46,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 5.0,
+                        offset: Offset(0, 0),
+                      )
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(data['iconpath']),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                data['task'],
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Text(
+            data['username'],
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex: 10,
+                child: Center(
+                  child: Text(
+                    data['from'],
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(flex: 4, child: Icon(Icons.arrow_forward)),
+              Expanded(
+                flex: 10,
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: Center(
+                    child: Text(
+                      data['to'],
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Text('Date: '),
+              Text(data['date']),
+            ],
+          ),
+          Row(
+            children: [
+              Text('Time: '),
+              Text(data['time']),
+            ],
+          ),
+          Row(
+            children: [
+              Text('Pax: '),
+              Text(data['pax']),
+            ],
+          ),
+          Row(
+            children: [
+              Text('Remark: '),
+              Text(data['remark']),
+            ],
+          ),
+          TextButton(
+              onPressed: () {
+                _acceptTask(document.id, user?.uid, data);
+              },
+              child: Text('Accept')),
+        ],
+      ),
+    ),
+  );
 }
 
-class CreateTaskState extends State<CreateTask> {
-  int _currentStep = 0;
-  String _ServiceDropDown = 'Select an service';
-  String _AreaDropDown = 'Select Area';
-  List<ServiceModel> instance = ServiceModel.getService();
-  TextEditingController textcontroller = TextEditingController();
-  TextEditingController timecontroller = TextEditingController();
-
-  var serviceName = [
-    'Select an service',
-    'Ride',
-    'Express',
-    'Food',
-  ];
-
-  var area = [
-    'Select Area',
-    'Within UTM',
-    'Without UTM',
-  ];
-
-  List<Step> steplist() => [
-        Step(
-            title: Text('Select category'),
-            isActive: _currentStep >= 0,
-            state: _currentStep <= 0 ? StepState.editing : StepState.complete,
-            content: Center(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                      height: 50,
-                      width: double.infinity,
-                      child: DropdownButton<String>(
-                        items: serviceName.map((String name) {
-                          return DropdownMenuItem(
-                            child: Text(name),
-                            value: name,
-                          );
-                        }).toList(),
-                        onChanged: (String? NewValue) {
-                          setState(() {
-                            _ServiceDropDown = NewValue!;
-                          });
-                        },
-                        value: _ServiceDropDown,
+Widget getNonHeleperTask(DocumentSnapshot document) {
+  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+  return Card(
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: Container(
+                  width: 46,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 5.0,
+                        offset: Offset(0, 0),
+                      )
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(data['iconpath']),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                data['task'],
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Text(
+            data['username'],
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex: 10,
+                child: Center(
+                  child: Text(
+                    data['from'],
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(flex: 4, child: Icon(Icons.arrow_forward)),
+              Expanded(
+                flex: 10,
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: Center(
+                    child: Text(
+                      data['to'],
+                      style: TextStyle(
+                        fontSize: 16,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                      height: 50,
-                      width: double.infinity,
-                      child: DropdownButton<String>(
-                        items: area.map((String name) {
-                          return DropdownMenuItem(
-                            child: Text(name),
-                            value: name,
-                          );
-                        }).toList(),
-                        onChanged: (String? NewValue) {
-                          setState(() {
-                            _AreaDropDown = NewValue!;
-                          });
-                        },
-                        value: _AreaDropDown,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            )),
-        Step(
-            title: Text('Task Details'),
-            isActive: _currentStep >= 1,
-            state: _currentStep == 1 ? StepState.editing : StepState.indexed,
-            content: Center(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                          flex: 5,
-                          child: TextField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              labelText: 'From',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                          )),
-                      Container(
-                        width: 50,
-                        height: 50,
-                        child: Icon(Icons.arrow_forward),
-                      ),
-                      Flexible(
-                          flex: 6,
-                          child: TextField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide.none),
-                              labelText: 'To',
-                            ),
-                          ))
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 60, child: Text('Date:')),
-                      Flexible(
-                          child: TextField(
-                        controller: textcontroller,
-                        onTap: () {
-                          _selectDate();
-                        },
-                        decoration: InputDecoration(
-                            filled: true,
-                            labelText: 'dd/mm/yy',
-                            prefixIcon: Icon(Icons.calendar_today),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(40)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blue),
-                                borderRadius: BorderRadius.circular(40))),
-                        readOnly: true,
-                      ))
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 60, child: Text('Time:')),
-                      Flexible(
-                          child: TextField(
-                        controller: timecontroller,
-                        onTap: () {
-                          _selectTime();
-                        },
-                        decoration: InputDecoration(
-                          filled: true,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          labelText: '',
-                        ),
-                      ))
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 60, child: Text('Pax:')),
-                      Flexible(
-                          child: TextField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(30)),
-                          labelText: 'No of Passengers',
-                          labelStyle: TextStyle(),
-                        ),
-                      ))
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: [
-                      Container(width: 60, child: Text('Remarks:')),
-                      Flexible(
-                          child: TextField(
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(30)),
-                          labelText: '',
-                        ),
-                      ))
-                    ],
-                  ),
-                  // SizedBox(
-                  //   height: 12,
-                  // ),
-                  // TextField(
-                  //   decoration: InputDecoration(
-                  //     border: OutlineInputBorder(),
-                  //     labelText: 'Area',
-                  //   ),
-                  // )
-                ],
-              ),
-            ))
-      ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Create task'),
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Text('Date: '),
+              Text(data['date']),
+            ],
+          ),
+          Row(
+            children: [
+              Text('Time: '),
+              Text(data['time']),
+            ],
+          ),
+          Row(
+            children: [
+              Text('Pax: '),
+              Text(data['pax']),
+            ],
+          ),
+          Row(
+            children: [
+              Text('Remark: '),
+              Text(data['remark']),
+            ],
+          ),
+        ],
       ),
-      body: Stepper(
-        steps: steplist(),
-        type: StepperType.horizontal,
-        currentStep: _currentStep,
-        onStepContinue: () {
-          if (_currentStep < steplist().length - 1) {
-            setState(() {
-              _currentStep += 1;
-            });
-          } else if (_currentStep == steplist().length - 1) {
-            setState(() {
-              Navigator.pushReplacementNamed(context, '/task');
-            });
-          }
-        },
-        onStepCancel: () {
-          if (_currentStep == 0) {
-            Navigator.pop(context);
-          } else if (_currentStep >= 0) {
-            setState(() {
-              _currentStep -= 1;
-            });
-          }
-        },
-      ),
-    );
-  }
+    ),
+  );
+}
 
-  Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2023),
-        lastDate: DateTime(2100));
+void _acceptTask(
+    String taskId, String? heleperId, Map<String, dynamic> taskData) async {
+  if (heleperId != null) {
+    final CollectionReference tasks =
+        FirebaseFirestore.instance.collection('task');
+    final DocumentReference taskRef = tasks.doc(taskId);
 
-    if (_picked != null) {
-      setState(() {
-        textcontroller.text = _picked.toString().split(" ")[0];
-      });
-    }
-  }
+    // Update the task document to mark it as accepted and heleper provider info
+    await taskRef.update({
+      'accepted': true,
+      'heleperId': heleperId,
+    });
 
-  Future<void> _selectTime() async {
-    TimeOfDay? _picked =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    // Move the accepted task to the helepers' accepted task list
+    final CollectionReference acceptedTasks = FirebaseFirestore.instance
+        .collection('user')
+        .doc(heleperId)
+        .collection('acceptedTasks');
 
-    if (_picked != null) {
-      setState(() {
-        timecontroller.text = _picked.format(context);
-      });
-    }
+    await acceptedTasks.add({
+      'taskId': taskId,
+      'heleperId': heleperId,
+      'taskData': taskData,
+    });
+
+    //delete the task from the list
+    await taskRef.delete();
   }
 }

@@ -3,7 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:helep_v1/pages/chat_page.dart';
 
 class Messages extends StatefulWidget {
@@ -15,60 +14,30 @@ class Messages extends StatefulWidget {
 
 class _MessagesState extends State<Messages> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  int _selectedIndex = 2;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Messages',
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      child: SafeArea(
+        child: Column(
+          children: [
+            //Page Title
+            Container(
+              height: 40,
+              width: double.maxFinite,
+              child: Text(
+                'Messages',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+
+            Expanded(child: _buildUserList()),
+          ],
         ),
       ),
-      body: _buildUserList(),
-      bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-              switch (index) {
-                case 0:
-                  Navigator.pushReplacementNamed(context, '/');
-                  break;
-                case 1:
-                  Navigator.pushReplacementNamed(context, '/task');
-                  break;
-                case 2:
-                  Navigator.pushReplacementNamed(context, '/messages');
-                  break;
-                case 3:
-                  Navigator.pushReplacementNamed(context, '/heleper');
-                  break;
-                case 4:
-                  Navigator.pushReplacementNamed(context, '/profile');
-                  break;
-              }
-            });
-          },
-          items: [
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Home.svg'),
-                label: 'Home'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Task.svg'),
-                label: 'Tasks'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset(_selectedIndex == 2
-                    ? 'assets/vectors/Messages_filled.svg'
-                    : 'assets/vectors/Messages.svg'),
-                label: 'Messages'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Helepers.svg'),
-                label: 'Helepers'),
-            BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/vectors/Profile.svg'),
-                label: 'Profile')
-          ]),
     );
   }
 
@@ -100,14 +69,14 @@ class _MessagesState extends State<Messages> {
     //display all user except current user
     if (_auth.currentUser!.email != data['data']) {
       return ListTile(
-        title: Text(data['email']),
+        title: Text(data['username']),
         onTap: () {
           //pass the clicked user's UID to the chat page
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
-                  receiverUserEmail: data['email'],
+                  receiverUsername: data['username'],
                   receiverUserID: data['uid']),
             ),
           );
